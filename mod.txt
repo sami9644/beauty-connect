@@ -4,3 +4,4 @@ Werkzeug
 pytz
 supabase
 python-dotenv
+gunicorn
