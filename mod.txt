@@ -1,0 +1,6 @@
+flask
+psycopg2-binary
+Werkzeug
+pytz
+supabase
+python-dotenv
