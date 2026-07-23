@@ -1,0 +1,34 @@
+{% extends "barber/dash.html" %}
+{% block content %}
+
+{% if bookings %}
+
+<table>
+<tr>
+    <th>Client phone number</th>
+    <th>Client full name</th>
+    <th>Booked for</th>
+    <th>Booked service</th>
+    <th>Price paid/about to be paid</th>
+    <th>Payment status</th>
+</tr>
+
+{% for booking in bookings %}
+<tr>
+    <td>{{booking.tel}}</td>
+    <td>{{ booking.fullname }}</td>
+    <td>{{ booking.time }}</td>
+    <td>{{ booking.service }}</td>
+    <td>{{ booking.price }}</td>
+    {{ booking.ispaid }}
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<div class="status">
+    <h2>No bookings found </h2>
+</div>
+
+{% endif %}
+
+{% endblock %}

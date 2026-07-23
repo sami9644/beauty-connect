@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Dashboard - Beauty Connect</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col items-center justify-center p-4 antialiased">
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2 w-full max-w-sm">
+      {% for category, message in messages %}
+        {% set bg_color = 'bg-emerald-50 border-emerald-500 text-emerald-800' if category == 'success' else 'bg-rose-50 border-rose-500 text-rose-800' %}
+        
+        <div class="flash-message relative border-l-4 p-4 rounded-lg shadow-sm flex justify-between items-center transition-all duration-300 {{ bg_color }}">
+          <div>
+            <span class="block sm:inline text-sm font-medium">{{ message }}</span>
+          </div>
+          <!-- Close Button -->
+          <button class="close-btn ml-4 text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+            &times;
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+    <!-- Header -->
+    <div class="mb-6 text-center">
+        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Beauty Connect Client Portal</h2>
+        <p class="text-sm text-slate-500 mt-1">Book your next sharp cut seamlessly</p>
+    </div>
+
+    <!-- Form Container -->
+    <div class="w-full max-w-md bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-200/50 p-6 sm:p-8 transition-all">
+        
+        <!-- Tab Switches -->
+        <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl mb-6">
+            <button id="signup-tab" type="button" onclick="changeAuth('signup')" 
+                class="w-full py-2 text-sm font-semibold text-center rounded-lg transition-all duration-200 bg-sky-600 text-white shadow-sm cursor-pointer">
+                Sign up
+            </button>
+            <button id="login-tab" type="button" onclick="changeAuth('login')" 
+                class="w-full py-2 text-sm font-semibold text-center rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 cursor-pointer">
+                Sign in
+            </button>
+        </div>
+        
+        <!-- Auth Form -->
+        <form id="auth-form" action="/client/signup" method="post" class="space-y-4">
+            
+            <!-- Full Name (Signup only) -->
+            <div class="signup-only flex flex-col space-y-1.5">
+                <label for="fullname" class="text-xs font-semibold text-slate-700 tracking-wide uppercase">Full Name</label>
+                <input type="text" name="fullname" id="fullname" required placeholder="John Doe"
+                    class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all text-sm">
+            </div>
+            
+            <!-- Gender (Signup only) -->
+            <div class="signup-only flex flex-col space-y-1.5">
+                <label for="gender" class="text-xs font-semibold text-slate-700 tracking-wide uppercase">Gender</label>
+                <div class="relative">
+                    <select name="gender" id="gender"
+                        class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all text-sm appearance-none cursor-pointer">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Phone Number -->
+            <div class="flex flex-col space-y-1.5">
+                <label for="tel" class="text-xs font-semibold text-slate-700 tracking-wide uppercase">Phone Number</label>
+                <input type="tel" name="tel" id="tel" required placeholder="1234567890"
+                    class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all text-sm">
+            </div>
+            
+            <!-- Password -->
+            <div class="flex flex-col space-y-1.5">
+                <label id="pass-label" for="pass" class="text-xs font-semibold text-slate-700 tracking-wide uppercase">Password</label>
+                <input type="password" name="pass" id="pass" required placeholder="••••••••"
+                    class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-100 transition-all text-sm">
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" id="submit-btn" 
+                class="w-full mt-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm hover:shadow-md active:scale-[0.99] transition-all duration-150 text-sm cursor-pointer">
+                Sign up
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function changeAuth(mode) {
+            const form = document.getElementById('auth-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const signupTab = document.getElementById('signup-tab');
+            const loginTab = document.getElementById('login-tab');
+            const signupFields = document.querySelectorAll('.signup-only');
+            
+            const fullnameInput = document.getElementById('fullname');
+            const telInput = document.getElementById('tel');
+
+            const activeClasses = "w-full py-2 text-sm font-semibold text-center rounded-lg transition-all duration-200 bg-sky-600 text-white shadow-sm cursor-pointer";
+            const inactiveClasses = "w-full py-2 text-sm font-semibold text-center rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900 cursor-pointer";
+
+            if (mode === 'login') {
+                signupTab.className = inactiveClasses;
+                loginTab.className = activeClasses;
+                
+                form.action = '/client/login';
+                submitBtn.innerText = 'Sign in';
+                
+                signupFields.forEach(field => field.classList.add('hidden'));
+                fullnameInput.removeAttribute('required');
+            } else {
+                loginTab.className = inactiveClasses;
+                signupTab.className = activeClasses;
+                
+                form.action = '/client/signup';
+                submitBtn.innerText = 'Sign up';
+                
+                signupFields.forEach(field => field.classList.remove('hidden'));
+                fullnameInput.setAttribute('required', '');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const closeButtons = document.querySelectorAll('.close-btn');
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const flashMessage = button.closest('.flash-message');
+                    flashMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        flashMessage.remove();
+                    }, 300);
+                });
+            });
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const flashes = document.querySelectorAll('.flash-message');
+                flashes.forEach(flash => {
+                    flash.style.opacity = '0';
+                    setTimeout(() => flash.remove(), 300);
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

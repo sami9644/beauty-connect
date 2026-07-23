@@ -1,0 +1,423 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent-color: #f59e0b;
+    --text-color: #f8fafc;
+    --text-muted: #94a3b8;
+    --input-bg: #111827;
+    --input-border: #334155;
+    --danger-color: #ef4444;
+}
+::-webkit-scrollbar {
+    background-color: transparent;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+}
+
+/* Borderless App Shell */
+.app-container {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #111827;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    padding-bottom: 20px; /* Removed large bottom padding */
+}
+
+/* Top Header Area */
+.header {
+    width: 100%;
+    padding: 20px;
+    background-color: var(--card-bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1f2937;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Burger Menu Button */
+.burger-btn {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.3rem;
+    cursor: pointer;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.logout-btn:active {
+    transform: scale(0.9);
+}
+
+/* Dashboard Content Container */
+.content {
+    flex: 1;
+    margin-top: 15%;
+    padding: 20px;
+}
+
+/* Info Display Card */
+.info-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-card h3 {
+    font-size: 1.4rem;
+    color: var(--accent-color);
+    border-bottom: 1px solid #334155;
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+}
+
+.info-item i {
+    color: var(--text-muted);
+    width: 20px;
+    text-align: center;
+}
+
+/* Side Navigation Menu Drawer */
+.side-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background-color: var(--card-bg);
+    border-right: 1px solid #1f2937;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 0;
+    z-index: 95;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.side-nav.open {
+    transform: translateX(0);
+}
+
+/* Overlay for Side Nav */
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 94;
+    display: none;
+}
+
+.nav-overlay.open {
+    display: block;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 1rem;
+    gap: 16px;
+    padding: 16px 24px;
+    transition: background 0.2s;
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+    width: 24px;
+}
+
+.nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item.active {
+    color: var(--accent-color);
+    background-color: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--accent-color);
+    padding-left: 20px;
+}
+
+/* Floating Action Button for Editing */
+.edit-trigger-btn {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    margin: 20px auto 0;
+    transition: transform 0.1s ease;
+}
+
+.edit-trigger-btn:active {
+    transform: scale(0.95);
+}
+
+/* Modal Popup System */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--card-bg);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.5);
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.open .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+/* Form styling inside modal */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.form-group input, .form-group select, .form-group textarea {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent-color);
+}
+
+.save-btn, .submit-btn {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.flash-messages {
+    width: 100%;
+    padding: 15px;
+    background-color: #1e293b;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-bottom: 2px solid var(--accent-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#close-btn {
+    background-color: transparent;
+    border: none;
+    color: #FFF;
+    font-weight: bolder;
+    align-self: flex-end;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.error {
+    color: #ef4444;
+}
+
+.services-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+    overflow-y: scroll;
+}
+
+.service-card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-left: 4px solid var(--accent-color);
+}
+
+.service-card h2 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+}
+
+.service-details {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.service-price {
+    font-weight: 700;
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    margin-top: 4px;
+}
+
+.add-trigger-btn {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    margin: 24px auto 0;
+    transition: transform 0.1s ease;
+}
+
+.add-trigger-btn:active {
+    transform: scale(0.95);
+}
+
+.danger {
+    background-color: transparent;
+    border: none;
+    align-self: flex-end;
+}
+
+.danger i {
+    color: rgb(255, 255, 255);
+    font-weight: bolder;
+    font-size: 19px;
+}
+.status {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

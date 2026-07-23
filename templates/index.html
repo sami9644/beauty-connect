@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty connect-app</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-5 text-center shadow-sm">
+        <h1 class="text-2xl font-bold tracking-wide text-slate-900">
+            Beauty connect<span class="text-amber-500">.</span>
+        </h1>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-4xl w-full mx-auto px-6 py-10 flex flex-col justify-center items-center gap-8">
+        {% block content %}
+        <div class="text-center">
+            <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome!</h2>
+            <p class="text-slate-500 mt-2 text-base">Choose your profile to get started</p>
+        </div>
+
+        <!-- Role Selection Cards Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+            <!-- Barber Option -->
+            <a href="/barber" class="group bg-white border border-slate-200 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:border-amber-500 hover:shadow-lg hover:shadow-amber-500/10">
+                <img src="/static/icons/noun-barber-6721253.svg" class="w-20 h-20 mx-auto mb-4 object-contain" alt="Barber Icon">
+                <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">I am a Barber</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Manage your schedule, showcase your cuts, and grow your local client base.</p>
+            </a>
+
+            <!-- Client Option -->
+            <a href="/client" class="group bg-white border border-slate-200 rounded-2xl p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:border-amber-500 hover:shadow-lg hover:shadow-amber-500/10">
+                <img src="/static/icons/noun-profile-1776201.svg" class="w-20 h-20 mx-auto mb-4 object-contain" alt="Client Icon">
+                <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors">I am a Client</h3>
+                <p class="text-slate-500 text-sm leading-relaxed">Find top-rated barbers near you, view real-time availability, and book instantly.</p>
+            </a>
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- Sticky Bottom Navigation -->
+    <nav class="bg-white border-t border-slate-200 py-3 sticky bottom-0 left-0 right-0 shadow-md">
+        <ul class="flex justify-around max-w-md mx-auto">
+            <li>
+                <a href="/barber" class="flex flex-col items-center gap-1 text-xs font-semibold text-slate-500 hover:text-amber-500 transition-colors">
+                    <img src="/static/icons/noun-barber-6721253.svg" class="w-10 h-10 object-contain" alt="Barber Portal">
+                    Barber Portal
+                </a>
+            </li>
+            <li>
+                <a href="/client" class="flex flex-col items-center gap-1 text-xs font-semibold text-slate-500 hover:text-amber-500 transition-colors">
+                    <img src="/static/icons/noun-profile-1776201.svg" class="w-10 h-10 object-contain" alt="Client Portal">
+                    Client Portal
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</body>
+</html>

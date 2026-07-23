@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About {{ data.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 antialiased flex flex-col">
+
+    <!-- Professional Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center">
+            <a href="{{url_for('client.dashboard')}}" class="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium transition duration-150 text-sm">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Container Centered -->
+    <main class="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 flex flex-col justify-start">
+        
+        <!-- Barber Card -->
+        <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col justify-between p-6 sm:p-8 hover:shadow-md transition duration-200 w-full">
+            <div>
+                <!-- Barber Header Info -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-full bg-slate-900 flex items-center justify-center text-white font-semibold text-xl tracking-wider shrink-0">
+                            {{ data.name[:1] }}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-xl tracking-tight">{{ data.name or "Unnamed Barber" }}</h3>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 mt-1 uppercase tracking-wider">
+                                {{ data.type or "Stylist" }}
+                            </span>
+                            <p class="px-2.5 py-0.5 font-bold text-slate-900">Rating : {{ rating(data.barberid).average_rating }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Barber Details -->
+                <div class="space-y-3 my-5 text-sm text-slate-600 border-t border-b border-slate-100 py-4">
+                    {% if data.address %}
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-location-dot text-slate-400 w-4 text-center text-base"></i>
+                        <span>{{ data.address }}</span>
+                    </div>
+                    {% endif %}
+                    {% if data.tel %}
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-phone text-slate-400 w-4 text-center text-base"></i>
+                        <a href="tel:{{data.tel}}" class="hover:text-indigo-600 transition duration-150">{{ data.tel }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 5-Star Rating and Comment Section -->
+            <div class="mt-2 border-t border-slate-100 pt-4">
+                <form action="/client/review/{{ data.barberid }}" method="POST" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Leave a Rating</label>
+                        <div class="flex items-center gap-1.5 text-xl text-slate-300" id="star-rating">
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition duration-150" data-value="1"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition duration-150" data-value="2"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition duration-150" data-value="3"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition duration-150" data-value="4"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition duration-150" data-value="5"></i>
+                        </div>
+                        <input type="hidden" name="rating" id="rating-value" value="1" required>
+                    </div>
+
+                    <div>
+                        <label for="comment" class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Your Review</label>
+                        <textarea id="comment" name="comment" rows="4" class="w-full text-sm border border-slate-200 rounded-lg p-2.5 focus:outline-hidden focus:ring-2 focus:ring-slate-900 focus:border-slate-900 placeholder-slate-400" placeholder="Share your experience..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold py-3 px-4 rounded-xl shadow-xs transition duration-150 cursor-pointer text-center">
+                        Submit Review
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Interactive Star Rating Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const stars = document.querySelectorAll('#star-rating i');
+            const ratingInput = document.getElementById('rating-value');
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const value = star.getAttribute('data-value');
+                    ratingInput.value = value;
+                    
+                    stars.forEach(s => {
+                        if (s.getAttribute('data-value') <= value) {
+                            s.classList.remove('text-slate-300');
+                            s.classList.add('text-amber-400');
+                        } else {
+                            s.classList.remove('text-amber-400');
+                            s.classList.add('text-slate-300');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

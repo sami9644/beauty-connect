@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beauty connect premium for barbers</title>
+    <!-- Note: Switched to FontAwesome 6.x as 7.x isn't fully standardized on standard cdnjs links yet -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/static/css/premium.css">
+</head>
+<body>
+    <div class="header">
+        <button onclick="if(confirm('Are you sure you wanna go back to the dashboard?')) {location.href=`/barber/dashboard` }"><i class="fa-solid fa-arrow-left"></i></button>
+    </div>
+    <div class="premium-card">
+        <div class="title">
+            <h2>Beauty connect premium</h2>
+        </div>
+        <div class="features-list">
+            <div class="feature"><i class="fa-solid fa-check"></i> Top listed barber</div>
+            <div class="feature"><i class="fa-solid fa-check"></i> Your barbershop will get more telegram recommendation</div>
+            <div class="feature"><i class="fa-solid fa-check"></i> Adding unlimited services and beauty products</div>
+        </div> <!-- Fixed missing closing div for features-list -->
+        <div class="actions">
+            <button>Get started for 1500 etb per month</button>
+        </div>
+    </div> <!-- Fixed missing closing div for premium-card -->
+</body>
+</html>

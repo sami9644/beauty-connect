@@ -1,0 +1,33 @@
+{% extends 'client/dash.html' %}
+
+{% block content %}
+<div class="min-h-[70vh] w-full flex flex-col justify-center items-center px-4 text-center">
+    <!-- Icon / Visual Element -->
+    <div class="mb-6 p-4 text-red-500 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+        </svg>
+    </div>
+
+    <!-- Error Code & Heading -->
+    <span class="text-sm font-semibold text-blue-600 uppercase tracking-wide dark:text-blue-400">404 Error</span>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-black-900">
+        Page not found
+    </h1>
+    
+    <!-- Description -->
+    <p class="mt-4 text-base leading-7 text-black-600 max-w-md">
+        Sorry, we couldn’t find the page you’re looking for. It might have been moved, deleted, or the URL might be incorrect.
+    </p>
+
+    <!-- Action Buttons -->
+    <div class="mt-10 flex items-center gap-x-4">
+        <a href="/client/dashboard" class="rounded-md bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors">
+            Go back home
+        </a>
+        <button onclick="window.history.back()" class="rounded-md border border-gray-300 dark:border-gray-700 px-5 py-2.5 text-sm font-semibold text-black-700">
+            Go back
+        </button>
+    </div>
+</div>
+{% endblock %}

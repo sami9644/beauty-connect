@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal - Beauty connect</title>
+    <!-- Tailwind CSS v4 Play CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Font Awesome Kit/CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Simple toggle logic for mobile burger menu and sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 antialiased">
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div id="flash-container" class="absolute top-4 right-4 z-80 flex flex-col gap-2 w-full max-w-sm">
+      {% for category, message in messages %}
+        {% set bg_color = 'bg-green-100 border-green-500 text-green-700' if category == 'success' else 'bg-red-100 border-red-500 text-red-700' %}
+        
+        <div class="flash-message relative border-l-4 p-4 rounded shadow-md flex justify-between items-center transition-all duration-300 {{ bg_color }}">
+          <div>
+            <span class="block sm:inline">{{ message }}</span>
+          </div>
+          <!-- Close Button -->
+          <button class="close-btn ml-4 text-gray-700 hover:text-gray-900 focus:outline-none">
+            &times;
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+    <!-- Top Navbar (Burger Menu Only) -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <!-- Sidebar Toggle (Desktop/Mobile) -->
+            <button onclick="toggleSidebar()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+            <span class="text-xl font-bold tracking-tight text-gray-900">Beauty connect</span>
+        </div>
+
+        <!-- Right Side Burger Menu (Drop down for Links) -->
+        <div class="relative">
+            <button onclick="toggleMobileMenu()" class="p-2 text-gray-600 hover:bg-gray-100 rounded-lg cursor-pointer">
+                <i class="fa-solid fa-ellipsis-vertical text-xl"></i>
+            </button>
+            
+            <!-- Dropdown Menu Links -->
+            <div id="mobile-menu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-2 z-50">
+                <a href="{{url_for('client.dashboard')}}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-house w-5 text-gray-400"></i> Home
+                </a>
+                <a href="/client/edit/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-circle-user"></i> Edit profile
+                </a>
+                <hr class="border-gray-100 my-1">
+                <a href="/client/logout" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                    <i class="fa-solid fa-right-from-bracket w-5 text-red-400"></i> Log Out
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex min-h-[calc(100vh-57px)]">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed inset-y-14 left-0 z-40 w-64 bg-white border-r border-gray-200 transition-transform duration-300 transform -translate-x-full md:translate-x-0 md:sticky md:top-14 block">
+            <div class="h-full px-4 py-6 overflow-y-auto flex flex-col justify-between">
+                <div class="space-y-2">
+                    <a href="/client/dashboard" class="flex items-center gap-3 px-4 py-3 text-gray-700 rounded-xl bg-gray-100 font-medium">
+                        <i class="fa-solid fa-scissors text-gray-900"></i>
+                        <span>Barbers</span>
+                    </a>
+                    <a href="/client/bookings" class="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-calendar-check text-gray-400"></i>
+                        <span>Appointments</span>
+                    </a>
+                    <a href="/client/products" class="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-spray-can-sparkles"></i>
+                        <span>Beauty Products</span>
+                    </a>
+                </div>
+                
+                <div class="border-t border-gray-100 pt-4">
+                    <a href="/client/logout" class="flex items-center gap-3 px-4 py-3 text-red-600 rounded-xl hover:bg-red-50 transition">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Log Out</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-scroll">
+            {% block content %}
+            <div class="mb-8">
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Available Barbers</h1>
+                <p class="text-sm text-gray-500 mt-1">Book your favorite barber and leave your feedback.</p>
+            </div>
+
+            <!-- Barbers Grid via Jinja2 Loop -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for barber in barbers %}
+                <div class="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden flex flex-col justify-between p-6 hover:shadow-md transition duration-200">
+                    <div>
+                        <!-- Barber Header Info -->
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center text-white font-bold text-lg">
+                                    {{ barber.name[:1]  }}
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-900 text-lg">{{ barber.name or "Unnamed Barber" }}</h3>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 mt-0.5">
+                                        {{ barber.type or "Stylist" }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barber Details -->
+                        <div class="space-y-2.5 my-4 text-sm text-gray-600 border-t border-b border-gray-100 py-4">
+                            {% if barber.address %}
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-location-dot text-gray-400 w-4 text-center"></i>
+                                <span>{{ barber.address }}</span>
+                            </div>
+                            {% endif %}
+                            {% if barber.tel %}
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-phone text-gray-400 w-4 text-center"></i>
+                                <span><a href="tel:{{barber.tel}}">{{ barber.tel }}</a></span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Actions Area -->
+                    <div class="mt-4 space-y-4">
+                        <button class="w-full bg-gray-950 text-white font-medium text-sm py-2.5 rounded-xl hover:bg-gray-800 transition shadow-xs cursor-pointer"><a href="/client/barber/{{barber.barberid}}">View profile</a></button>
+                        <button class="w-full bg-gray-950 text-white font-medium text-sm py-2.5 rounded-xl hover:bg-gray-800 transition shadow-xs cursor-pointer"><a href="/client/book/{{barber.barberid}}">Book</a></button>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-span-full bg-white border border-gray-200 rounded-2xl p-12 text-center">
+                    <i class="fa-solid fa-users text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500 font-medium">No barbers found right now.</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endblock %}
+        </main>
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const closeButtons = document.querySelectorAll('.close-btn');
+    
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const flashMessage = button.closest('.flash-message');
+            flashMessage.style.opacity = '0';
+            setTimeout(() => {
+                flashMessage.remove();
+            }, 300); // Wait for the transition to finish before removing
+        });
+    });
+    
+    // Auto-dismiss after 5 seconds (Optional)
+    setTimeout(() => {
+        const flashes = document.querySelectorAll('.flash-message');
+        flashes.forEach(flash => {
+            flash.style.opacity = '0';
+            setTimeout(() => flash.remove(), 300);
+        });
+    }, 5000);
+});
+</script>
+</body>
+</html>

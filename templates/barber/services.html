@@ -1,0 +1,73 @@
+{% extends "barber/dash.html" %}
+
+{% block content %}
+
+<div class="services-container">
+    {% if services %}
+        {% for service in services %}
+            <div class="service-card">
+                <h2>{{ service.service }}</h2>
+                <p class="service-details">{{ service.details }}</p>
+                <p class="service-price">{{ service.price }} Birr</p>
+                <button class="danger"><a href="/barber/delete/service/{{ service.id }}"><i class="fa-solid fa-trash"></i></a></button>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="text-align: center; color: var(--text-muted); margin-top: 20px;">No services added yet.</p>
+    {% endif %}
+</div>
+
+<!-- Add Service Action Trigger Button -->
+<button class="add-trigger-btn" onclick="openServiceModal()">
+    <i class="fa-solid fa-plus"></i> Add Service
+</button>
+
+<!-- Slide-up Popup Modal Form -->
+<div class="modal-overlay" id="serviceModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Add New Service</h3>
+            <button class="close-modal-btn" onclick="closeServiceModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <form class="service-form" action="/barber/add-service" method="POST">
+            <div class="form-group">
+                <label for="service-name">Service Name</label>
+                <input type="text" id="service-name" name="service" placeholder="e.g. Haircut & Styling" required>
+            </div>
+
+            <div class="form-group">
+                <label for="service-price">Price (Birr)</label>
+                <input type="number" id="service-price" name="price" placeholder="e.g. 250" required>
+            </div>
+
+            <div class="form-group">
+                <label for="service-details">Details / Description</label>
+                <textarea id="service-details" name="details" rows="3" placeholder="Describe what this service includes..." required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">Save Service</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openServiceModal() {
+        document.getElementById('serviceModal').classList.add('open');
+    }
+
+     function closeServiceModal() {
+        document.getElementById('serviceModal').classList.remove('open');
+    }
+
+    // Dismiss overlay if user clicks outside of container canvas
+    window.onclick = function(event) {
+        const modal = document.getElementById('serviceModal');
+        if (event.target === modal) {
+            closeServiceModal();
+        }
+    }
+</script>
+{% endblock %}

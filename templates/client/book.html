@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Appointment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <h1 class="text-xl font-bold tracking-tight text-gray-900">BsMart</h1>
+            <a href="/client/dashboard" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-black transition">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-3xl mx-auto px-4 py-10">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 sm:p-8">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-950">Secure Your Slot</h2>
+                <p class="text-sm text-gray-500 mt-1">Pick your required service and a convenient time.</p>
+            </div>
+
+            <form action="/client/book/{{barberid}}" method="POST"  class="space-y-8">
+                
+                <!-- Hidden input to hold the final YYYY:MM:DD HH:MM:SS string -->
+                <input type="hidden" id="final_timestamp" name="booking_timestamp">
+
+            <!-- Section: When to Book -->
+            <div>
+                <label class="block text-sm font-semibold uppercase tracking-wider text-gray-600 mb-3">1. Select Date & Time</label>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Date Selector Dropdown -->
+                    <div>
+                        <label for="date_preset" class="block text-xs font-medium text-gray-500 mb-1">Day</label>
+                        <select id="date_preset" onchange="toggleCustomDays()" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 bg-white focus:border-black focus:ring-1 focus:ring-black outline-none transition">
+                            <option value="0">Today</option>
+                            <option value="1">Tomorrow</option>
+                            <option value="custom">Custom (within 7 days)</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="when" name="date" value="" required>
+                    <!-- Custom Days Number Input (Hidden by default) -->
+                    <div id="custom_days_wrapper" class="hidden">
+                        <label for="custom_days_input" class="block text-xs font-medium text-gray-500 mb-1">In how many days?</label>
+                        <input type="number" id="custom_days_input" value="2" min="2" max="7"
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-black focus:ring-1 focus:ring-black outline-none transition">
+                    </div>
+
+                    <!-- Time Input -->
+                    <div>
+                        <label for="booking_time" class="block text-xs font-medium text-gray-500 mb-1">Time</label>
+                        <input type="time" name="hour" id="booking_time" required
+                            class="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-black focus:ring-1 focus:ring-black outline-none transition">
+                    </div>
+                </div>
+            </div>
+
+                <!-- Section: Services Loop -->
+                <div>
+                    <label class="block text-sm font-semibold uppercase tracking-wider text-gray-600 mb-3">2. Select a Service</label>
+                    <div class="space-y-3">
+                        {% for service in services %}
+                        <label class="relative flex items-start border border-gray-200 rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-black has-[:checked]:bg-gray-50/50">
+                            <div class="flex items-center h-5">
+                                <input type="radio" id="service_{{ service['id'] }}" name="service_id" value="{{ service['id'] }}" required
+                                       class="h-4 w-4 text-black border-gray-300 focus:ring-black">
+                            </div>
+                            <div class="ml-3 flex-1 flex justify-between items-start">
+                                <div>
+                                    <span class="block font-medium text-gray-950">{{ service['service'] }}</span>
+                                    {% if service['details'] %}
+                                    <span class="block text-sm text-gray-500 mt-0.5">{{ service['details'] }}</span>
+                                    {% endif %}
+                                </div>
+                                <span class="font-semibold text-gray-950">${{ "%.2f"|format(service['price']) }}</span>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Submit Section -->
+                <div class="pt-4 border-t border-gray-100">
+                    <button type="submit" 
+                            class="w-full bg-black hover:bg-gray-900 text-white font-medium py-3 px-4 rounded-xl transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
+                        Confirm Appointment
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <script>
+    // Toggle the numeric "custom days" field if "custom" is picked
+    function toggleCustomDays() {
+        const preset = document.getElementById('date_preset').value;
+        const wrapper = document.getElementById('custom_days_wrapper');
+        if (preset !== 'custom') {
+        document.getElementById('when').value = preset
+        }
+
+        if (preset === 'custom') {
+            wrapper.classList.remove('hidden');
+            document.getElementById('when').value = document.getElementById("custom_days_input").value;
+        } else {
+            wrapper.classList.add('hidden');
+        }
+    }
+
+    document.getElementById("custom_days_input").addEventListener('input',function () {
+        document.getElementById('when').value = document.getElementById("custom_days_input").value;
+    })
+
+    function combineTimestamp(event) {
+        const preset = document.getElementById('date_preset').value;
+        const timeInput = document.getElementById('booking_time').value; // HH:MM
+
+        if (!timeInput) return;
+
+        // Determine how many days to add from today
+        let daysToAdd = 0;
+        if (preset === 'custom') {
+            daysToAdd = parseInt(document.getElementById('custom_days_input').value, 10) || 2;
+        } else {
+            daysToAdd = parseInt(preset, 10);
+        }
+
+        // Calculate the targeted date
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + daysToAdd);
+
+        // Extract parts and format strictly to YYYY:MM:DD
+        const yyyy = targetDate.getFullYear();
+        const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(targetDate.getDate()).padStart(2, '0');
+        const structuredDate = `${yyyy}:${mm}:${dd}`;
+
+        // Ensure seconds are appended to time format
+        const formattedTime = timeInput.length === 5 ? `${timeInput}:00` : timeInput;
+
+        // Set the final hidden input value
+        document.getElementById('final_timestamp').value = `${structuredDate} ${formattedTime}`;
+    }
+</script>
+</body>
+</html>

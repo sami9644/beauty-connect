@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barber Dashboard | Beauty connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/barber.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <div class="header-left">
+                <button class="burger-btn" onclick="toggleSideNav()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h2>Barber Dashboard</h2>
+            </div>
+            <a href="/barber/logout" class="logout-btn" title="Log Out">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </a>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+                <button id="close-btn" onclick='document.querySelector(".flash-messages").style.display="none"'>X</button>
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="content">
+            {% block content %}
+            <div class="info-section">
+                    <div class="info-card">
+                        <h3>{{ datas.name }}</h3>
+                        <div class="info-item">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>{{ datas.address }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fa-solid fa-scissors"></i>
+                            <span>{{ datas.type }}</span>
+                        </div>
+                        <div class="info-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>{{ datas.tel }}</span>
+                        </div>
+                    </div>
+            </div>
+            <button class="edit-trigger-btn" onclick="openEditModal()">
+                <i class="fa-solid fa-pen-to-square"></i> Edit Info
+            </button>
+            {% endblock %}
+        </div>
+
+        <div class="nav-overlay" id="navOverlay" onclick="toggleSideNav()"></div>
+
+        <nav class="side-nav" id="sideNav">
+            <a href="/barber/dashboard" class="nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="/barber/services" class="nav-item">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>Services</span>
+            </a>
+            <a href="/barber/beauty-products" class="nav-item">
+                <i class="fa-solid fa-bottle-droplet"></i>
+                <span>Products</span>
+            </a>
+            <a href="/barber/go-premium" class="nav-item">
+                <i class="fa-solid fa-crown"></i>
+                <span>Premium</span>
+            </a>
+            <a href="/barber/service/bookings" class="nav-item">
+                <i class="fa-solid fa-book"></i>
+                <span>Bookings</span>
+            </a>
+            <a href="/barber/product/orders" class="nav-item">
+                <i class="fa-solid fa-bottle-droplet"></i>
+                <span>Orders</span>
+            </a>
+        </nav>
+
+        <div class="modal-overlay" id="editModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Edit Shop Details</h3>
+                    <button class="close-modal-btn" onclick="closeEditModal()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                {% if datas and datas|length > 0 %}
+                {% set edit_data = datas %}
+                <form class="edit-form" action="/barber/edit-info" method="POST">
+                    <div class="form-group">
+                        <label for="edit-name">Barber Shop Name</label>
+                        <input type="text" id="edit-name" name="shop-name" value="{{ edit_data.name }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-address">Shop Address / Location</label>
+                        <input type="text" id="edit-address" name="shop-add" value="{{ edit_data.address }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit-type">Service Type</label>
+                        <select id="edit-type" name="type" required>
+                            <option value="men" {% if edit_data.type == 'men' %}selected{% endif %}>For Men Only</option>
+                            <option value="females" {% if edit_data.type == 'females' %}selected{% endif %}>For Females Only</option>
+                            <option value="both" {% if edit_data.type == 'both' %}selected{% endif %}>Both (Unisex Salon)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSideNav() {
+            document.getElementById('sideNav').classList.toggle('open');
+            document.getElementById('navOverlay').classList.toggle('open');
+        }
+
+        function openEditModal() {
+            document.getElementById('editModal').classList.add('open');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('open');
+        }
+
+        // Close when clicking outside form elements on background screen frame
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+        window.addEventListener('load',() => {
+            let navlinks = document.querySelectorAll(".nav-item");
+            let currentHREF = location.pathname;
+            // console.log(currentHREF);
+            // console.log(navlinks[0].pathname);
+            for (let link of navlinks) {
+                if (link.pathname === currentHREF) {
+                    link.classList.add('active');
+                    break;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
