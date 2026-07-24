@@ -166,7 +166,7 @@ def dashboard():
     # print(gender[0])
     with connection() as conn:
         cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("SELECT * FROM barbers WHERE type = %s OR type = %s",(gender[0],'both'))
+        cur.execute("SELECT * FROM barbers")
         barbers = cur.fetchall()
     return render_template("client/dash.html",barbers=barbers)
 
